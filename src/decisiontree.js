@@ -36,16 +36,13 @@ function _analyse( promiseResolve, promiseReject, oStep, oData, oScope){
   if( 'test' in oStep){
 
     sResult   = launchFunction( oStep.test, oData, oScope).toString();
-    oNextStep = oStep.if[ sResult] || { action : ()=>{ promiseReject( 'wrong path')}};
+    oNextStep = oStep.if[ sResult] || { action : ()=>{ promiseReject( 'path end !!')}};
 
     arg[ arg.indexOf(oStep) ] = oNextStep;
-
     _analyse.apply( this, arg);
 
   }else{
-
     promiseResolve( oData);
-
   }
 
 };
