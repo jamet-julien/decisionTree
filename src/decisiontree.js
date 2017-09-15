@@ -53,10 +53,20 @@ class DecisionTree{
   /**
    *
    */
-  static decide( oStep, oData, oScope = window){
+  static decide( oStep, mData, oScope = window){
 
     return new Promise( (promiseResolve, promiseReject) => {
-        _analyse.apply( this, [ promiseResolve, promiseReject, oStep, oData, oScope]);
+
+        if( mData instanceof Array){
+
+          mData.map((oData)=>{
+            _analyse.apply( this, [ promiseResolve, promiseReject, oStep, oData, oScope]);
+          });
+
+        }else{
+          _analyse.apply( this, [ promiseResolve, promiseReject, oStep, mData, oScope]);
+        }
+
     });
 
   }

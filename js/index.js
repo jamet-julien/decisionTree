@@ -1,8 +1,18 @@
-var user = {
+var user = [{
   prenom : 'julien',
   age    : 33,
   nom    : 'DUPOND'
-};
+},
+{
+  prenom : 'denis',
+  age    : 55,
+  nom    : 'jamet'
+},
+{
+  prenom : 'julien',
+  age    : 40,
+  nom    : 'jamet'
+}];
 
 
 
@@ -75,9 +85,9 @@ function testAge(){
  * @return {[type]}      [description]
  */
 function final( msg){
-  document.body.textContent =  this.prenom +' '+msg;
+  document.body.innerHTML +=  this.prenom +' '+msg+'<br/>';
 }
 
-DecisionTree.decide( oStep, user, this)
+DecisionTree.decide( oStep, user)
             .then( console.log)
             .catch( console.warn);
