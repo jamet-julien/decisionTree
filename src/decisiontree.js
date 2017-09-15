@@ -47,12 +47,12 @@ function _analyse( promiseResolve, promiseReject, oStep, oData, oScope){
 
 };
 
-
+/**
+ * [oScope description]
+ * @type {[type]}
+ */
 class DecisionTree{
 
-  /**
-   *
-   */
   static decide( oStep, mData, oScope = window){
 
     return new Promise( (promiseResolve, promiseReject) => {

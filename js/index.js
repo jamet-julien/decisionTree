@@ -2,13 +2,21 @@ var user = [{
   prenom : 'julien',
   age    : 33,
   nom    : 'DUPOND'
-},
-{
+
+},{
+  
+  prenom : 'julien',
+  age    : 43,
+  nom    : 'DUPOND'
+
+},{
+  
   prenom : 'denis',
   age    : 55,
   nom    : 'jamet'
-},
-{
+
+},{
+  
   prenom : 'julien',
   age    : 40,
   nom    : 'jamet'
@@ -21,11 +29,15 @@ var oStep     = {
   test : 'testPrenom',
   if   : {
     true  : {
-        action : 'getAge',
-        test   : 'testAge',
+
+        action : [ 'getAge', 10],
+        test   : [ 'testAge', 18],
+
         if     : {
           true : {
+
             test   : 'testNom',
+
             if     : {
               true  : {
                 action : [ 'final', 'majeur et de la famille']
@@ -50,8 +62,8 @@ var oStep     = {
  * [getAge description]
  * @return {[type]} [description]
  */
-function getAge(){
-  this.age -= 15;
+function getAge( iNum){
+  this.age -= iNum;
 }
 
 /**
@@ -74,8 +86,8 @@ function testNom(){
  * [testAge description]
  * @return {[type]} [description]
  */
-function testAge(){
-  return this.age >= 18;
+function testAge( iNum){
+  return this.age >= iNum;
 }
 
 
@@ -85,7 +97,7 @@ function testAge(){
  * @return {[type]}      [description]
  */
 function final( msg){
-  document.body.innerHTML +=  this.prenom +' '+msg+'<br/>';
+  document.body.innerHTML +=  this.prenom +' est '+msg+'<br/>';
 }
 
 DecisionTree.decide( oStep, user)
