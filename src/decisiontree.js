@@ -1,32 +1,48 @@
 /**
- * [_analyse description]
- * @param  {[type]} oStep [description]
- * @param  {[type]} oData [description]
- * @return {[type]}       [description]
+ * [launchFunction description]
+ * @param  {[type]} mExec      [description]
+ * @param  {[type]} currentObj [description]
+ * @param  {[type]} oScope     [description]
+ * @return {[type]}            [description]
  */
-function _analyse( promiseResolve, promiseReject, oStep, oData){
+function launchFunction( mExec, currentObj, oScope){
 
-  var sResult = 'default', sResult, oNextStep, fAction, aArgs = [];
+  var result = null, sActionName, aArgs = [];
+
+  [ sActionName, aArgs] = ( mExec instanceof Array)? mExec : [ mExec, []];
+
+  return oScope[sActionName].call( currentObj, aArgs);
+}
+
+/**
+ * [_analyse description]
+ * @param       {[type]} promiseResolve [description]
+ * @param       {[type]} promiseReject  [description]
+ * @param       {[type]} oStep          [description]
+ * @param       {[type]} oData          [description]
+ * @param       {[type]} oScope         [description]
+ * @constructor
+ * @return      {[type]}                [description]
+ */
+function _analyse( promiseResolve, promiseReject, oStep, oData, oScope){
+
+  var sResult = 'default',
+      oNextStep,
+      fAction,
+      arg = [].slice.call( arguments);
 
   if( 'action' in oStep){
-    if( oStep.action instanceof Array){
-      fAction = oStep.action[0];
-      aArgs   = oStep.action[1] || [];
-    }else{
-      fAction = oStep.action;
-    }
-    fAction.call( oData, aArgs);
+    launchFunction( oStep.action, oData, oScope);
   }
 
   if( 'test' in oStep){
 
-    sResult = typeof oStep.test === 'function'
-              ? oStep.test.call( oData).toString() // call the test with the results from the action
-              : oStep.test.toString();
-
+    sResult   = launchFunction( oStep.test, oData, oScope).toString();
     oNextStep = oStep.if[ sResult] || { action : ()=>{ promiseReject( 'wrong path')}};
 
-    _analyse.apply( this, [ promiseResolve, promiseReject, oNextStep, oData]);
+    arg[ arg.indexOf(oStep) ] = oNextStep;
+
+    _analyse.apply( this, arg);
 
   }else{
 
@@ -42,10 +58,10 @@ class DecisionTree{
   /**
    *
    */
-  static decide( oStep, oData){
+  static decide( oStep, oData, oScope = window){
 
     return new Promise( (promiseResolve, promiseReject) => {
-        _analyse.apply( this, [ promiseResolve, promiseReject, oStep, oData]);
+        _analyse.apply( this, [ promiseResolve, promiseReject, oStep, oData, oScope]);
     });
 
   }

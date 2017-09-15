@@ -1,41 +1,83 @@
 var user = {
   prenom : 'julien',
   age    : 33,
-  nom    : 'dupont'
+  nom    : 'DUPOND'
 };
 
 
 
 
 var oStep     = {
-  test : user.prenom == 'julien',
+  test : 'testPrenom',
   if   : {
     true  : {
-        action : getAge,
-        test   : user.age > 18,
+        action : 'getAge',
+        test   : 'testAge',
         if     : {
           true : {
-            action : [final, 'max majeur']
+            test   : 'testNom',
+            if     : {
+              true  : {
+                action : [ 'final', 'majeur et de la famille']
+              },
+              false : {
+                action : [ 'final', 'majeur mais pas de la famille']
+              }
+            }
           },
           false : {
-            action : [final, 'min mineur']
+            action : [ 'final', 'mineur']
           }
         }
     },
     false : {
-
+      action : [ 'final', 'pas connu']
     }
   }
 };
 
+/**
+ * [getAge description]
+ * @return {[type]} [description]
+ */
 function getAge(){
-  user.age -= 15;
+  this.age -= 15;
 }
 
-function final( sMsg){
-  alert( sMsg);
+/**
+ * [testPrenom description]
+ * @return {[type]} [description]
+ */
+function testPrenom(){
+  return this.prenom == 'julien';
 }
 
-DecisionTree.decide( oStep, user)
-         .then( console.log)
-         .catch( console.warn);
+/**
+ * [testNom description]
+ * @return {[type]} [description]
+ */
+function testNom(){
+  return this.nom == 'DUPOND';
+}
+
+/**
+ * [testAge description]
+ * @return {[type]} [description]
+ */
+function testAge(){
+  return this.age >= 18;
+}
+
+
+/**
+ * [final description]
+ * @param  {[type]} sMsg [description]
+ * @return {[type]}      [description]
+ */
+function final( msg){
+  document.body.textContent =  this.prenom +' '+msg;
+}
+
+DecisionTree.decide( oStep, user, this)
+            .then( console.log)
+            .catch( console.warn);
