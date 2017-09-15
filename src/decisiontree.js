@@ -7,11 +7,9 @@
  */
 function launchFunction( mExec, currentObj, oScope){
 
-  var result = null, sActionName, aArgs = [];
-
-  [ sActionName, aArgs] = ( mExec instanceof Array)? mExec : [ mExec, []];
-
-  return oScope[sActionName].call( currentObj, aArgs);
+  var result = null, sActionName, mArgs = [];
+  [ sActionName, mArgs] = ( mExec instanceof Array)? mExec : [ mExec, []];
+  return oScope[sActionName].apply( currentObj, ( mArgs instanceof Array)? mArgs : [ mArgs]);
 }
 
 /**
