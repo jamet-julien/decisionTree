@@ -146,6 +146,6 @@ var user = {
 
 
 
-DecisionTree.addTick( tick)
+DecisionTree.addTick( tick);
 DecisionTree.decide( aStep, listUser)
             .then( endTest);

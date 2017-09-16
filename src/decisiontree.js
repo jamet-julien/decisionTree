@@ -37,7 +37,7 @@ function _analyseObject( promiseResolve, promiseReject, oStep, oData, oScope){
   if( 'test' in oStep){
 
     sResult   = launchFunction( oStep.test, oData, oScope).toString();
-    oNextStep = oStep.if[ sResult] || { action : ()=>{ promiseReject( 'path end !!')}};
+    oNextStep = oStep.if[ sResult] || { action : ()=>{ promiseReject( oData)}};
 
     arg[ arg.indexOf(oStep) ] = oNextStep;
     _analyseObject.apply( this, arg);
@@ -75,15 +75,19 @@ function _analyseArray( promiseResolve, promiseReject, aStep, oData, oScope){
 
     if( 'test' in oStep){
       bResult   = launchFunction( oStep.test, oData, oScope);
-    }else{
-      promiseResolve( oData);
     }
 
     if( !bResult){
-      promiseReject( iLen);
       break;
     }
 
+  }
+
+  // fin du script;
+  if( bResult){
+    promiseResolve( oData);
+  }else{
+    promiseReject( oData);
   }
 
 };
