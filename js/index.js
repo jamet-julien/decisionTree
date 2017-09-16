@@ -60,7 +60,7 @@
   * @return {[type]} [description]
   */
  function endTest(){
-   console.table(l istUser);
+   console.table( listUser);
  }
 /*************************************************
  __     ___    ____
