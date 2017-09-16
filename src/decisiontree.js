@@ -13,7 +13,7 @@ function launchFunction( mExec, currentObj, oScope){
 }
 
 /**
- * [_analyse description]
+ * [_analyseObject description]
  * @param       {[type]} promiseResolve [description]
  * @param       {[type]} promiseReject  [description]
  * @param       {[type]} oStep          [description]
@@ -22,12 +22,13 @@ function launchFunction( mExec, currentObj, oScope){
  * @constructor
  * @return      {[type]}                [description]
  */
-function _analyse( promiseResolve, promiseReject, oStep, oData, oScope){
+function _analyseObject( promiseResolve, promiseReject, oStep, oData, oScope){
 
   var sResult = 'default',
       oNextStep,
-      fAction,
       arg = [].slice.call( arguments);
+
+  fTick.call( oData);
 
   if( 'action' in oStep){
     launchFunction( oStep.action, oData, oScope);
@@ -39,7 +40,7 @@ function _analyse( promiseResolve, promiseReject, oStep, oData, oScope){
     oNextStep = oStep.if[ sResult] || { action : ()=>{ promiseReject( 'path end !!')}};
 
     arg[ arg.indexOf(oStep) ] = oNextStep;
-    _analyse.apply( this, arg);
+    _analyseObject.apply( this, arg);
 
   }else{
     promiseResolve( oData);
@@ -48,23 +49,82 @@ function _analyse( promiseResolve, promiseReject, oStep, oData, oScope){
 };
 
 /**
+ * [_analyseArray description]
+ * @param       {[type]} promiseResolve [description]
+ * @param       {[type]} promiseReject  [description]
+ * @param       {[type]} oStep          [description]
+ * @param       {[type]} oData          [description]
+ * @param       {[type]} oScope         [description]
+ * @constructor
+ * @return      {[type]}                [description]
+ */
+function _analyseArray( promiseResolve, promiseReject, aStep, oData, oScope){
+
+  var oStep, bResult = false,
+      iLen   = aStep.length,
+      aClone = [...aStep].reverse();
+
+  for(;iLen--;){
+    oStep = aClone[iLen];
+
+    fTick.call( oData);
+
+    if( 'action' in oStep){
+      launchFunction( oStep.action, oData, oScope);
+    }
+
+    if( 'test' in oStep){
+      bResult   = launchFunction( oStep.test, oData, oScope);
+    }else{
+      promiseResolve( oData);
+    }
+
+    if( !bResult){
+      promiseReject( iLen);
+      break;
+    }
+
+  }
+
+};
+
+var fTick = function(){};
+
+/**
  * [oScope description]
  * @type {[type]}
  */
 class DecisionTree{
 
-  static decide( oStep, mData, oScope = window){
+  /**
+   * [addTick description]
+   * @param {[type]} _fTick [description]
+   */
+  static addTick( _fTick){
+    fTick = _fTick;
+  }
+
+  /**
+   * [decide description]
+   * @param  {[type]} mStep           [description]
+   * @param  {[type]} mData           [description]
+   * @param  {[type]} [oScope=window] [description]
+   * @return {[type]}                 [description]
+   */
+  static decide( mStep, mData, oScope = window){
+
+    var execute = ( mStep instanceof Array)? _analyseArray : _analyseObject ;
 
     return new Promise( (promiseResolve, promiseReject) => {
 
         if( mData instanceof Array){
 
           mData.map((oData)=>{
-            _analyse.apply( this, [ promiseResolve, promiseReject, oStep, oData, oScope]);
+            execute.apply( this, [ promiseResolve, promiseReject, mStep, oData, oScope]);
           });
 
         }else{
-          _analyse.apply( this, [ promiseResolve, promiseReject, oStep, mData, oScope]);
+          execute.apply( this, [ promiseResolve, promiseReject, mStep, mData, oScope]);
         }
 
     });

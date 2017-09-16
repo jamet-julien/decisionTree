@@ -1,30 +1,77 @@
-var user = [{
-  prenom : 'julien',
-  age    : 33,
-  nom    : 'DUPOND'
+/*************************************************
+  _____ _   _ _   _  ____ _____ ___ ___  _   _
+ |  ___| | | | \ | |/ ___|_   _|_ _/ _ \| \ | |
+ | |_  | | | |  \| | |     | |  | | | | |  \| |
+ |  _| | |_| | |\  | |___  | |  | | |_| | |\  |
+ |_|    \___/|_| \_|\____| |_| |___\___/|_| \_|
+ *************************************************/
 
-},{
-  
-  prenom : 'julien',
-  age    : 43,
-  nom    : 'DUPOND'
+ /**
+  * [getAge description]
+  * @return {[type]} [description]
+  */
+ function getAge( iNum){
+   this.age -= iNum;
+ }
 
-},{
-  
-  prenom : 'denis',
-  age    : 55,
-  nom    : 'jamet'
+ /**
+  * [testPrenom description]
+  * @return {[type]} [description]
+  */
+ function testPrenom(){
+   return this.prenom == 'julien';
+ }
 
-},{
-  
-  prenom : 'julien',
-  age    : 40,
-  nom    : 'jamet'
-}];
+ /**
+  * [testNom description]
+  * @return {[type]} [description]
+  */
+ function testNom(){
+   return this.nom == 'dupond';
+ }
+
+ /**
+  * [testAge description]
+  * @return {[type]} [description]
+  */
+ function testAge( iNum){
+   return this.age >= iNum;
+ }
+
+ /**
+  * [final description]
+  * @param  {[type]} sMsg [description]
+  * @return {[type]}      [description]
+  */
+ function final( msg){
+   document.body.innerHTML +=  this.prenom +' est '+msg+'<br/>';
+ }
+
+ /**
+  * [tick description]
+  * @return {[type]} [description]
+  */
+ function tick(){
+   this.fitness = (this.fitness === undefined)? 0 : this.fitness + 1;
+ }
+
+ /**
+  * [endTest description]
+  * @return {[type]} [description]
+  */
+ function endTest(){
+   console.table(l istUser);
+ }
+/*************************************************
+ __     ___    ____
+ \ \   / / \  |  _ \
+  \ \ / / _ \ | |_) |
+   \ V / ___ \|  _ <
+    \_/_/   \_\_| \_\
+*************************************************/
 
 
-
-
+// MODE DECISION OBJECT
 var oStep     = {
   test : 'testPrenom',
   if   : {
@@ -58,48 +105,47 @@ var oStep     = {
   }
 };
 
-/**
- * [getAge description]
- * @return {[type]} [description]
- */
-function getAge( iNum){
-  this.age -= iNum;
-}
+// MODE DECISION ARRAY
+var aStep = [
+  {test   : 'testPrenom'},
+  {action : ['getAge', 10], test:['testAge', 18]},
+  {test   : 'testNom'},
+  {action : [ 'final', 'majeur et de la famille']}
+];
 
-/**
- * [testPrenom description]
- * @return {[type]} [description]
- */
-function testPrenom(){
-  return this.prenom == 'julien';
-}
+// LIST USER
+var listUser = [{
+  prenom : 'julien',
+  age    : 33,
+  nom    : 'dupond'
 
-/**
- * [testNom description]
- * @return {[type]} [description]
- */
-function testNom(){
-  return this.nom == 'DUPOND';
-}
+},{
 
-/**
- * [testAge description]
- * @return {[type]} [description]
- */
-function testAge( iNum){
-  return this.age >= iNum;
-}
+  prenom : 'julien',
+  age    : 43,
+  nom    : 'dupond'
+
+},{
+
+  prenom : 'denis',
+  age    : 55,
+  nom    : 'jamet'
+
+},{
+
+  prenom : 'julien',
+  age    : 40,
+  nom    : 'jamet'
+}];
+
+var user = {
+  prenom : 'julien',
+  age    : 33,
+  nom    : 'dupond'
+};
 
 
-/**
- * [final description]
- * @param  {[type]} sMsg [description]
- * @return {[type]}      [description]
- */
-function final( msg){
-  document.body.innerHTML +=  this.prenom +' est '+msg+'<br/>';
-}
 
-DecisionTree.decide( oStep, user)
-            .then( console.log)
-            .catch( console.warn);
+DecisionTree.addTick( tick)
+DecisionTree.decide( aStep, listUser)
+            .then( endTest);
