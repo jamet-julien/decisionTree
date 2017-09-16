@@ -25,7 +25,7 @@ function launchFunction( mExec, currentObj, oScope){
 function _analyseObject( promiseResolve, promiseReject, oStep, oData, oScope){
 
   var sResult = 'default',
-      oNextStep,
+      oNextStep, bNext = true,
       arg = [].slice.call( arguments);
 
   fTick.call( oData);
@@ -37,9 +37,13 @@ function _analyseObject( promiseResolve, promiseReject, oStep, oData, oScope){
   if( 'test' in oStep){
 
     sResult   = launchFunction( oStep.test, oData, oScope).toString();
-    oNextStep = oStep.if[ sResult] || { action : ()=>{ promiseReject( oData)}};
+    bNext     = ( 'force' in oStep && sResult != oStep.force)? false : bNext;
 
-    arg[ arg.indexOf(oStep) ] = oNextStep;
+    if( bNext){
+      oNextStep = oStep.if[ sResult] || { action : ()=>{ promiseReject( oData)}};
+      arg[ arg.indexOf( oStep) ] = oNextStep;
+    }
+
     _analyseObject.apply( this, arg);
 
   }else{
@@ -65,7 +69,7 @@ function _analyseArray( promiseResolve, promiseReject, aStep, oData, oScope){
       aClone = [...aStep].reverse();
 
   for(;iLen--;){
-    oStep = aClone[iLen];
+    oStep   = aClone[iLen];
 
     fTick.call( oData);
 
@@ -75,6 +79,13 @@ function _analyseArray( promiseResolve, promiseReject, aStep, oData, oScope){
 
     if( 'test' in oStep){
       bResult   = launchFunction( oStep.test, oData, oScope);
+    }
+
+    if( 'force' in oStep){
+      if( !bResult){
+        iLen++;
+        continue;
+      }
     }
 
     if( !bResult){

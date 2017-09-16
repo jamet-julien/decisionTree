@@ -10,8 +10,8 @@
   * [getAge description]
   * @return {[type]} [description]
   */
- function getAge( iNum){
-   this.age -= iNum;
+ function grow( iNum){
+   this.age += iNum;
  }
 
  /**
@@ -77,8 +77,9 @@ var oStep     = {
   if   : {
     true  : {
 
-        action : [ 'getAge', 10],
+        action : [ 'grow', 1],
         test   : [ 'testAge', 18],
+        force  : 'true',
 
         if     : {
           true : {
@@ -108,7 +109,7 @@ var oStep     = {
 // MODE DECISION ARRAY
 var aStep = [
   {test   : 'testPrenom'},
-  {action : ['getAge', 10], test:['testAge', 18]},
+  {action : ['grow', 1], test:['testAge', 18], force : 1},
   {test   : 'testNom'},
   {action : [ 'final', 'majeur et de la famille']}
 ];
@@ -116,31 +117,31 @@ var aStep = [
 // LIST USER
 var listUser = [{
   prenom : 'julien',
-  age    : 33,
+  age    : 10,
   nom    : 'dupond'
 
 },{
 
   prenom : 'julien',
-  age    : 43,
+  age    : 19,
   nom    : 'dupond'
 
 },{
 
   prenom : 'denis',
-  age    : 55,
+  age    : 5,
   nom    : 'jamet'
 
 },{
 
   prenom : 'julien',
-  age    : 40,
+  age    : 18,
   nom    : 'jamet'
 }];
 
 var user = {
   prenom : 'julien',
-  age    : 33,
+  age    : 3,
   nom    : 'dupond'
 };
 
@@ -148,4 +149,5 @@ var user = {
 
 DecisionTree.addTick( tick);
 DecisionTree.decide( aStep, listUser)
-            .then( endTest);
+            .then( endTest)
+            .catch( function(){ console.log('reject')});
